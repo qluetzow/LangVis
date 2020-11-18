@@ -1,5 +1,7 @@
+# Langvis: A visualizer for world languages' locations.
+
 # Copyright (C) 2020 Quinn Luetzow,  Angelique Bernik, Dakota Bond,
-# Joseph Marchetti, Josh Kizilos
+# Joseph Marchetti, Josh Kizilos.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
