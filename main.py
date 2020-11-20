@@ -27,3 +27,16 @@ def main():
 
 if __name__ = "__main__":
     main()
+import pandas as pd
+import bokeh
+
+df = pd.read_csv('countries (2).csv')
+latitude, longitude = [], []
+countrynames = []
+nativcountry = []
+nativlang = []
+latitude.append(df['latitude'])
+longitude.append(df['longitude'])
+countrynames.append(df['country'])
+nativcountry.append(df['nativcountry'])
+nativlang.append(df['nativelanguage'])
