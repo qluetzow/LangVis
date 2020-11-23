@@ -29,8 +29,20 @@ if __name__ = "__main__":
     main()
 import pandas as pd
 import bokeh
+import pandas_bokeh
 
-df = pd.read_csv('countries (2).csv')
+df = pd.read_csv('countries.csv')
+
+new_column_names = {'42.546245':'latitude','1.601554':'longitude','Andorra':'country','Andorra.1':'nativcountry','Català':'nativlang'}
+df = df.rename(columns=new_columns_names)
+new_row = {'latitude':42.546245,'longitude':1.601554,'country':'Andorra','nativcountry':'Andorra','nativlang':'Català'}
+df = df.append(new_row, ignore_index=True)
+
+df2 = pd.DataFrame(columns=['latitude','longitude'])
+df3 = pd.DataFrame(columns=['countrynames','nativcountry','nativlang'])
+frames = [df2,df3]
+combined_df = pd.concat(frames,axis=1)
+
 latitude, longitude = [], []
 countrynames = []
 nativcountry = []
