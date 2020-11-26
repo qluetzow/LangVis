@@ -21,9 +21,31 @@ __author__ = ["Quinn Luetzow", "Angelique Bernik", "Dakota Bond",
               "Joseph Marchetti", "Josh Kizilos"]
 
 
+import bokeh.plotting as bp
+import bokeh.tile_providers as bt
+
+
 def main():
-    pass
+    # set name for output file
+    bp.output_file("output.html")
+
+    # get background tile
+    tile_provider = bt.get_provider(bt.Vendors.CARTODBPOSITRON)
+
+    # set up basic plot
+    plot = bp.figure(x_range=(-2000000, 6000000), y_range=(-1000000, 7000000),
+                     x_axis_type="mercator", y_axis_type="mercator")
+
+    # add tile
+    plot.add_tile(tile_provider)
+
+    # display
+    bp.show(plot)
 
 
-if __name__ = "__main__":
+    # Still have to get data and put it into the plot, but can't really do that
+    # very well until we know how it's formatted
+
+
+if __name__ == "__main__":
     main()
