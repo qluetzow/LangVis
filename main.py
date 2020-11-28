@@ -32,6 +32,8 @@ from bokeh.layouts import layout
 from bokeh.palettes import Spectral3
 from bokeh.tile_providers import CARTODBPOSITRON
 from pyproj import Proj, transform
+import numpy as np
+from bokeh.io import *
 
 def data():
   df = pd.read_csv('countries.csv') #read file
@@ -46,7 +48,9 @@ def data():
   df3 = pd.DataFrame(columns=['countrynames','nativcountry','nativlang'])
   frames = [df2,df3] #grouping
   combined_df = pd.concat(frames,axis=1) #re combining
-
+  lat = df['latitude'].astype('float')
+  long = df['longitude'].astype('float')
+  
 def main():
     # set name for output file
     bp.output_file("output.html")
