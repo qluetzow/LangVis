@@ -48,8 +48,8 @@ def data():
   df3 = pd.DataFrame(columns=['countrynames','nativcountry','nativlang'])
   frames = [df2,df3] #grouping
   combined_df = pd.concat(frames,axis=1) #re combining
-  lat = df['latitude'].astype('float')
-  long = df['longitude'].astype('float')
+  lat = df['latitude'].astype('float') #column as float 
+  long = df['longitude'].astype('float') #column as float
   
 def main():
     # set name for output file
