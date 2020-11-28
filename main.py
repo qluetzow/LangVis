@@ -24,6 +24,19 @@ __author__ = ["Quinn Luetzow", "Angelique Bernik", "Dakota Bond",
 import bokeh.plotting as bp
 import bokeh.tile_providers as bt
 
+def data():
+  df = pd.read_csv('countries.csv') #read file
+  #changing the column names from the andorra location to what each column represents
+  new_column_names = {'42.546245':'latitude','1.601554':'longitude','Andorra':'country','Andorra.1':'nativcountry','Català':'nativlang'}
+  df = df.rename(columns=new_columns_names) #renaming said columns
+  #creating a new row to include the Andorra row that was previously removed
+  new_row = {'latitude':42.546245,'longitude':1.601554,'country':'Andorra','nativcountry':'Andorra','nativlang':'Català'}
+  df = df.append(new_row, ignore_index=True) #append to the data frame, keeping the structure of the framw
+  #separating the columns if need to be used in such a way
+  df2 = pd.DataFrame(columns=['latitude','longitude'])
+  df3 = pd.DataFrame(columns=['countrynames','nativcountry','nativlang'])
+  frames = [df2,df3] #grouping
+  combined_df = pd.concat(frames,axis=1) #re combining
 
 def main():
     # set name for output file
