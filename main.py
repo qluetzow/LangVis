@@ -44,7 +44,7 @@ def data():
   new_row = {'latitude':42.546245,'longitude':1.601554,'country':'Andorra','nativcountry':'Andorra','nativlang':'Català'}
   df = df.append(new_row, ignore_index=True) #append to the data frame, keeping the structure of the framw
   #separating the columns if need to be used in such a way
-  df2 = pd.DataFrame(columns=['latitude','longitude'])
+  df2 = pd.DataFrame(columns=['latitude','longitude']) 
   df3 = pd.DataFrame(columns=['countrynames','nativcountry','nativlang'])
   frames = [df2,df3] #grouping
   combined_df = pd.concat(frames,axis=1) #re combining
@@ -57,7 +57,22 @@ def data():
     return df
 
 df=wgs84_to_web_mercator(df,'longitude','latitude')
-  
+#below if needed
+latitude_points = [*range(-90.000000,90.000000,1)] #horizontal lines if needed
+longitude_points = [*range(-180.000000,180.000000,1)] #veritcal lines if needed
+#below function if needed
+def LongLat_to_EN(long, lat): #function to change the latitude values and the longitude values to east and north axis
+  try:
+    easting, northing = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), long, lat)
+    return easting, northing
+  except:
+    return None, None
+# goal of previous is make sure there are not overlapping values thus wonking up the layout
+#using e and n for the application of the range of points, there are probably already a range that could be used
+df['E'], df['N'] = zip(*df.apply(lambda x: LongLat_to_EN(x['longitude_points'],x['latitude_points']), axis=1))
+grouped = df.groupby(['E','N'])['latitude','longitude'].sum().reset_index() #grouping the range to the data
+source = ColumnDataSource(grouped) #source for the data plot
+#above could be reomved if you don't need
 def main():
     # set name for output file
     bp.output_file("output.html")
