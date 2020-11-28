@@ -51,7 +51,6 @@ df3 = pd.DataFrame(columns=['countrynames','nativcountry','nativlang'])
 frames = [df2,df3] #grouping
 combined_df = pd.concat(frames,axis=1) #re combining
 
-output_file('file') #stand in, if used
 latitude_points = [*range(-90.000000,90.000000,1)] #horizontal lines
 longitude_points = [*range(-180.000000,180.000000,1)] #veritcal lines
 
