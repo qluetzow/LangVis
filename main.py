@@ -50,11 +50,11 @@ def data():
   combined_df = pd.concat(frames,axis=1) #re combining
   lat = df['latitude'].astype('float') #column as float 
   long = df['longitude'].astype('float') #column as float
-  def wgs84_to_web_mercator(df, long, lat): #Converts decimal longitude/latitude to Web Mercator format
-    k = 6378137
-    df["x"] = df[long] * (k * np.pi/180.0)
-    df["y"] = np.log(np.tan((90 + df[lat]) * np.pi/360.0)) * k
-    return df
+def wgs84_to_web_mercator(df, long, lat): #Converts decimal longitude/latitude to Web Mercator format
+  k = 6378137
+  df["x"] = df[long] * (k * np.pi/180.0)
+  df["y"] = np.log(np.tan((90 + df[lat]) * np.pi/360.0)) * k
+  return df
 
 df=wgs84_to_web_mercator(df,'longitude','latitude')
 #below if needed
