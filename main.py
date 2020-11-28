@@ -67,23 +67,4 @@ df['E'], df['N'] = zip(*df.apply(lambda x: LongLat_to_EN(x['longitude_points'],x
 grouped = df.groupby(['E','N'])['latitude','longitude'].sum().reset_index() #grouping the range to the data
 source = ColumnDataSource(grouped) #source for the data plot
 #range of the graph in values, may conflict with lat long, was a little confused between the usage of e and N as well as its relation to the data with the below
-left = -2150000
-right = 18000000
-bottom = -5300000
-top = 11000000
-#making graph
-p = figure(x_range+Range1d(left, right), y_range+Range1d(bottom,top))
-p.add_tile(CARTODBPOSITRON)
-p.circle(x='E', y='N', source=source, line_color='grey', fill_color='yellow')
-
-p.axis.visible = False
-#showing graph
-show(p)
-#hover tool for the usage of interactive
-hover = HoverTool() #fill in holder for eventual placement of other columns
-
-
-#above code based on the visualizing Data with Bokeh and Pandas from the programming Historian, as well as some tutorials on Pandas itself
-#needs hover tool appliction to be added
-#could be proofed for errors or modified to our use better/as seen fit
 
