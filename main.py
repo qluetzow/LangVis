@@ -23,6 +23,15 @@ __author__ = ["Quinn Luetzow", "Angelique Bernik", "Dakota Bond",
 
 import bokeh.plotting as bp
 import bokeh.tile_providers as bt
+import pandas as pd 
+import bokeh
+import pandas_bokeh
+from bokeh.models import ColumnDataSource
+from bokeh.models.tools import HoverTool
+from bokeh.layouts import layout
+from bokeh.palettes import Spectral3
+from bokeh.tile_providers import CARTODBPOSITRON
+from pyproj import Proj, transform
 
 def data():
   df = pd.read_csv('countries.csv') #read file
