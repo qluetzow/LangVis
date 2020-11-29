@@ -23,76 +23,83 @@ __author__ = ["Quinn Luetzow", "Angelique Bernik", "Dakota Bond",
 
 import bokeh.plotting as bp
 import bokeh.tile_providers as bt
-import pandas as pd 
-import bokeh
-import pandas_bokeh
 from bokeh.models import ColumnDataSource
 from bokeh.models.tools import HoverTool
-from bokeh.layouts import layout
-from bokeh.palettes import Spectral3
-from bokeh.tile_providers import CARTODBPOSITRON
-from pyproj import Proj, transform
+import pandas as pd
 import numpy as np
-from bokeh.io import *
+
 
 def data():
-  df = pd.read_csv('countries.csv') #read file
-  #changing the column names from the andorra location to what each column represents
-  new_column_names = {'42.546245':'latitude','1.601554':'longitude','Andorra':'country','Andorra.1':'nativcountry','Català':'nativlang'}
-  df = df.rename(columns=new_columns_names) #renaming said columns
-  #creating a new row to include the Andorra row that was previously removed
-  new_row = {'latitude':42.546245,'longitude':1.601554,'country':'Andorra','nativcountry':'Andorra','nativlang':'Català'}
-  df = df.append(new_row, ignore_index=True) #append to the data frame, keeping the structure of the framw
-  #separating the columns if need to be used in such a way
-  df2 = pd.DataFrame(columns=['latitude','longitude']) 
-  df3 = pd.DataFrame(columns=['countrynames','nativcountry','nativlang'])
-  frames = [df2,df3] #grouping
-  combined_df = pd.concat(frames,axis=1) #re combining
-  lat = df['latitude'].astype('float') #column as float 
-  long = df['longitude'].astype('float') #column as float
-def wgs84_to_web_mercator(df, long, lat): #Converts decimal longitude/latitude to Web Mercator format
-  k = 6378137
-  df["x"] = df[long] * (k * np.pi/180.0)
-  df["y"] = np.log(np.tan((90 + df[lat]) * np.pi/360.0)) * k
-  return df
+    """ Pull data from a local .csv file and format it for plotting. """
 
-df=wgs84_to_web_mercator(df,'longitude','latitude')
-#below if needed
-latitude_points = [*range(-90.000000,90.000000,1)] #horizontal lines if needed
-longitude_points = [*range(-180.000000,180.000000,1)] #veritcal lines if needed
-#below function if needed
-def LongLat_to_EN(long, lat): #function to change the latitude values and the longitude values to east and north axis
-  try:
-    easting, northing = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), long, lat)
-    return easting, northing
-  except:
-    return None, None
-# goal of previous is make sure there are not overlapping values thus wonking up the layout
-#using e and n for the application of the range of points, there are probably already a range that could be used
-df['E'], df['N'] = zip(*df.apply(lambda x: LongLat_to_EN(x['longitude_points'],x['latitude_points']), axis=1))
-grouped = df.groupby(['E','N'])['latitude','longitude'].sum().reset_index() #grouping the range to the data
-source = ColumnDataSource(grouped) #source for the data plot
-#above could be reomved if you don't need
+    df = pd.read_csv('countries.csv') #read file
+  
+    # changing the column names from the andorra location to what each
+    # column represents
+    new_columns_names = {'42.546245' : 'latitude','1.601554' : 'longitude',
+                        'Andorra' : 'country', 'Andorra.1' : 'nativcountry',
+                        'Català' : 'nativlang'}
+    #renaming said columns
+    df = df.rename(columns=new_columns_names)
+  
+    # creating a new row to include the Andorra row that was previously removed
+    new_row = {'latitude' : 42.546245,'longitude' : 1.601554,
+               'country' : 'Andorra', 'nativcountry' : 'Andorra',
+               'nativlang' : 'Català'}
+  
+    # append to the data frame, keeping the structure of the frame
+    df = df.append(new_row, ignore_index=True)
+
+    # convert from lat/long coordinates to Web Mercator coordinates
+    wgs84_to_web_mercator(df, 'longitude', 'latitude')
+
+    source = ColumnDataSource(df) #source for the data plot
+
+    return source
+
+
+def wgs84_to_web_mercator(df, long, lat):
+  """ Convert decimal longitude/latitude to Web Mercator format. """
+  
+  earth_radius = 6378137 # earth radius in meters at equator
+
+  # add Web Mercator representations as new columns to the dataframe
+  df["x"] = df[long] * (earth_radius * np.pi/180.0)
+  df["y"] = np.log(np.tan((90 + df[lat]) * np.pi/360.0)) * earth_radius
+
+
 def main():
+    """ Main function for flow control and management. """
+
     # set name for output file
     bp.output_file("output.html")
 
-    # get background tile
-    tile_provider = bt.get_provider(bt.Vendors.CARTODBPOSITRON)
+    # get data from csv
+    source = data()
 
     # set up basic plot
     plot = bp.figure(x_range=(-2000000, 6000000), y_range=(-1000000, 7000000),
                      x_axis_type="mercator", y_axis_type="mercator")
 
-    # add tile
-    plot.add_tile(tile_provider)
+    # get background tile and add to plot
+    tile_provider = bt.get_provider(bt.Vendors.CARTODBPOSITRON)
+    plot.add_tile(tile_provider)    
+
+
+    # set up hover tooltips and add to plot
+    hover = HoverTool()
+    hover.tooltips = [("Country", "@country"),
+                      ("Native name", "@nativcountry"),
+                      ("Native Language", "@nativlang")]
+    
+    plot.add_tools(hover)
+
+    # add datapoints to plot, using circles to mark geographic locations
+    plot.circle(x="x", y="y", source=source, size=10, color="red")
+    
 
     # display
     bp.show(plot)
-
-
-    # Still have to get data and put it into the plot, but can't really do that
-    # very well until we know how it's formatted
 
 
 if __name__ == "__main__":
