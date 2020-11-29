@@ -20,6 +20,9 @@
 __author__ = ["Quinn Luetzow", "Angelique Bernik", "Dakota Bond",
               "Joseph Marchetti", "Josh Kizilos"]
 
+__doc__ = """Langvis: A visualizer for world languages."""
+
+
 
 import bokeh.plotting as bp
 import bokeh.tile_providers as bt
@@ -32,40 +35,38 @@ import numpy as np
 def data():
     """ Pull data from a local .csv file and format it for plotting. """
 
-    df = pd.read_csv('countries.csv') #read file
-  
+    data_frame = pd.read_csv('countries.csv') #read file
+
     # changing the column names from the andorra location to what each
     # column represents
     new_columns_names = {'42.546245' : 'latitude','1.601554' : 'longitude',
                         'Andorra' : 'country', 'Andorra.1' : 'nativcountry',
                         'Català' : 'nativlang'}
     #renaming said columns
-    df = df.rename(columns=new_columns_names)
-  
+    data_frame = data_frame.rename(columns=new_columns_names)
+
     # creating a new row to include the Andorra row that was previously removed
     new_row = {'latitude' : 42.546245,'longitude' : 1.601554,
                'country' : 'Andorra', 'nativcountry' : 'Andorra',
                'nativlang' : 'Català'}
-  
+
     # append to the data frame, keeping the structure of the frame
-    df = df.append(new_row, ignore_index=True)
+    data_frame = data_frame.append(new_row, ignore_index=True)
 
     # convert from lat/long coordinates to Web Mercator coordinates
-    wgs84_to_web_mercator(df, 'longitude', 'latitude')
+    wgs84_to_web_mercator(data_frame, 'longitude', 'latitude')
 
-    source = ColumnDataSource(df) #source for the data plot
-
-    return source
+    return ColumnDataSource(data_frame) #source for the data plot
 
 
-def wgs84_to_web_mercator(df, long, lat):
-  """ Convert decimal longitude/latitude to Web Mercator format. """
-  
-  earth_radius = 6378137 # earth radius in meters at equator
+def wgs84_to_web_mercator(data_frame, long, lat):
+    """ Convert decimal longitude/latitude to Web Mercator format. """
 
-  # add Web Mercator representations as new columns to the dataframe
-  df["x"] = df[long] * (earth_radius * np.pi/180.0)
-  df["y"] = np.log(np.tan((90 + df[lat]) * np.pi/360.0)) * earth_radius
+    earth_radius = 6378137 # earth radius in meters at equator
+
+    # add Web Mercator representations as new columns to the dataframe
+    data_frame["x"] = data_frame[long] * (earth_radius * np.pi/180.0)
+    data_frame["y"] = np.log(np.tan((90 + data_frame[lat]) * np.pi/360.0)) * earth_radius
 
 
 def main():
@@ -83,7 +84,7 @@ def main():
 
     # get background tile and add to plot
     tile_provider = bt.get_provider(bt.Vendors.CARTODBPOSITRON)
-    plot.add_tile(tile_provider)    
+    plot.add_tile(tile_provider)
 
 
     # set up hover tooltips and add to plot
@@ -91,12 +92,12 @@ def main():
     hover.tooltips = [("Country", "@country"),
                       ("Native name", "@nativcountry"),
                       ("Native Language", "@nativlang")]
-    
+
     plot.add_tools(hover)
 
     # add datapoints to plot, using circles to mark geographic locations
     plot.circle(x="x", y="y", source=source, size=10, color="red")
-    
+
 
     # display
     bp.show(plot)
