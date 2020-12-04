@@ -81,7 +81,8 @@ def main():
 
     # set up basic plot
     plot = bp.figure(x_range=(-2000000, 6000000), y_range=(-1000000, 7000000),
-                     x_axis_type="mercator", y_axis_type="mercator", sizing_mode="fixed", height = 700, width = 700)
+                     x_axis_type="mercator", y_axis_type="mercator",
+                     sizing_mode="fixed", height = 700, width = 700)
 
     # get background tile and add to plot
     tile_provider = bt.get_provider(bt.Vendors.CARTODBPOSITRON)
@@ -99,15 +100,19 @@ def main():
 
     # define column names for the file that will be accesed
     colnames = ['latitude','longitude','country','nativcountry','nativlang']
+
     # read the file and go through the file to add the country names to a list
     countrylist = pd.read_csv('countries.csv',names=colnames)
-    countrylist['combined'] = countrylist['country'].astype(str) + " " + countrylist['nativcountry'].astype(str) + " " + countrylist['nativlang'].astype(str)
+    countrylist['combined'] = (countrylist['country'].astype(str) + " " +
+                               countrylist['nativcountry'].astype(str) + " " +
+                               countrylist['nativlang'].astype(str))
 
     menu = countrylist.combined.tolist()
-    
+
     # make a drodown menu that shows a list of the Countries
-    language_finder = Dropdown(label='List of Countries',button_type="warning",menu=menu)
-    
+    language_finder = Dropdown(label='List of Countries',button_type="warning",
+                               menu=menu)
+
     # add datapoints to plot, using circles to mark geographic locations
     plot.circle(x="x", y="y", source=source, size=10, color="red")
 
