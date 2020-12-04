@@ -81,7 +81,7 @@ def main():
 
     # set up basic plot
     plot = bp.figure(x_range=(-2000000, 6000000), y_range=(-1000000, 7000000),
-                     x_axis_type="mercator", y_axis_type="mercator", sizing_mode="fixed", height = 800, width = 1600)
+                     x_axis_type="mercator", y_axis_type="mercator", sizing_mode="fixed", height = 700, width = 700)
 
     # get background tile and add to plot
     tile_provider = bt.get_provider(bt.Vendors.CARTODBPOSITRON)
