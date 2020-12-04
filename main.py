@@ -101,7 +101,9 @@ def main():
     colnames = ['latitude','longitude','country','nativcountry','nativlang']
     # read the file and go through the file to add the country names to a list
     countrylist = pd.read_csv('countries.csv',names=colnames)
-    menu = countrylist.country.tolist()
+    countrylist['combined'] = countrylist['country'].astype(str) + " " + countrylist['nativcountry'].astype(str) + " " + countrylist['nativlang'].astype(str)
+
+    menu = countrylist.combined.tolist()
     
     # make a drodown menu that shows a list of the Countries
     language_finder = Dropdown(label='List of Countries',button_type="warning",menu=menu)
