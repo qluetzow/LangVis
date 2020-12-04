@@ -26,8 +26,9 @@ __doc__ = """Langvis: A visualizer for world languages."""
 
 import bokeh.plotting as bp
 import bokeh.tile_providers as bt
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, Dropdown
 from bokeh.models.tools import HoverTool
+from bokeh.layouts import row
 import pandas as pd
 import numpy as np
 
@@ -80,7 +81,7 @@ def main():
 
     # set up basic plot
     plot = bp.figure(x_range=(-2000000, 6000000), y_range=(-1000000, 7000000),
-                     x_axis_type="mercator", y_axis_type="mercator")
+                     x_axis_type="mercator", y_axis_type="mercator", sizing_mode="fixed", height = 800, width = 1600)
 
     # get background tile and add to plot
     tile_provider = bt.get_provider(bt.Vendors.CARTODBPOSITRON)
@@ -95,12 +96,22 @@ def main():
 
     plot.add_tools(hover)
 
+
+    # define column names for the file that will be accesed
+    colnames = ['latitude','longitude','country','nativcountry','nativlang']
+    # read the file and go through the file to add the country names to a list
+    countrylist = pd.read_csv('countries.csv',names=colnames)
+    menu = countrylist.country.tolist()
+    
+    # make a drodown menu that shows a list of the Countries
+    language_finder = Dropdown(label='List of Countries',button_type="warning",menu=menu)
+    
     # add datapoints to plot, using circles to mark geographic locations
     plot.circle(x="x", y="y", source=source, size=10, color="red")
 
-
-    # display
-    bp.show(plot)
+    # configuring the display and displaying it
+    display_layout = row(language_finder,plot)
+    bp.show(display_layout)
 
 
 if __name__ == "__main__":
