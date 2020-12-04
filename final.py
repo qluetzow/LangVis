@@ -18,6 +18,6 @@ if __name__ == "__main__":
         (r"/languagemap", myRequestHandler)
     ])
 
-#listenn on port 80
+#listen on port 80
 app.listen(80)
 tornado.ioloop.IOLoop.current().start()
